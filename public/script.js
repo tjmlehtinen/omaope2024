@@ -4,10 +4,16 @@ const chatbox = document.getElementById("chatbox");
 
 messageButton.addEventListener("click", sendMessage);
 
-function sendMessage() {
+async function sendMessage() {
     const userMessage = messageInput.value;
     messageInput.value = "";
     addMessageTo(chatbox, userMessage);
+    const response = await fetch("/chat", {
+        method: "POST",
+        headers: { "Content-type": "application/json" },
+        body: JSON.stringify({ message: userMessage })
+    });
+    console.log(response);
 }
 
 function addMessageTo(box, message) {
