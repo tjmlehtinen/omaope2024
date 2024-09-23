@@ -13,6 +13,12 @@ app.listen(port, () => {
 app.post('/chat', (req, res) => {
     const userMessage = req.body.message;
     console.log(userMessage);
-    const botMessage = 'just joo';
-    res.json({ message: botMessage });
+    try {
+        console.log(hep);
+        const botMessage = 'just joo: ' + userMessage;
+        res.json({ message: botMessage });
+    } catch(error) {
+        console.error('Virhe:', error.message);
+        res.status(500, 'Internal server error');
+    }
 });
