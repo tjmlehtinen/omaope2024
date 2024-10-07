@@ -32,8 +32,8 @@ app.post('/chat', async (req, res) => {
             })
         });
         const data = await response.json();
-        console.log(data);
-        const botMessage = "täh";
+        console.log(data.choices[0].message);
+        const botMessage = data.choices[0].message.content;
         res.json({ message: botMessage });
     } catch(error) {
         console.error('Virhe:', error.message);
