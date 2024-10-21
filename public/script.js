@@ -1,8 +1,12 @@
 const messageButton = document.getElementById("message-button");
 const messageInput = document.getElementById("message-input");
 const chatbox = document.getElementById("chatbox");
+const imageButton = document.getElementById("image-button");
+const imageInput = document.getElementById("image-input");
+const questionbox = document.getElementById("questionbox");
 
 messageButton.addEventListener("click", sendMessage);
+imageButton.addEventListener("click", sendImages);
 
 async function sendMessage() {
     const userMessage = messageInput.value;
@@ -21,6 +25,15 @@ async function sendMessage() {
     } catch(error) {
         console.error("Virhe:", error.message);
         addMessageTo(chatbox, "Tapahtui virhe.");
+    }
+}
+
+function sendImages() {
+    console.log("kuvia yritetään lisätä");
+    const images = imageInput.files;
+    if (images.length === 0) {
+        alert("Ei ole yhtään kuvaa!!!");
+        return;
     }
 }
 
