@@ -28,12 +28,26 @@ async function sendMessage() {
     }
 }
 
-function sendImages() {
+async function sendImages() {
     console.log("kuvia yritetään lisätä");
     const images = imageInput.files;
     if (images.length === 0) {
         alert("Ei ole yhtään kuvaa!!!");
         return;
+    }
+    const formData = new FormData();
+    for (const image of images) {
+        formData.append("images", image);
+    }
+    console.log(formData.getAll("images"));
+    try {
+        const response = await fetch("/upload-images", {
+            method: "POST",
+            body: formData
+        });
+    } catch (error) {
+        console.error("Virhe:", error.message);
+        addMessageTo(chatbox, "Tapahtui virhe.");
     }
 }
 
