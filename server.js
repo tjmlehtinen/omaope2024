@@ -3,6 +3,7 @@ import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import multer from 'multer';
 import vision from '@google-cloud/vision';
+import fs from 'fs';
 
 dotenv.config();
 
@@ -14,6 +15,8 @@ const imageClient = new vision.ImageAnnotatorClient({
 
 const app = express();
 const port = 3000;
+
+let textFromImages = '';
 
 app.use(bodyParser.json());
 app.use(express.static('public'));
@@ -53,7 +56,12 @@ app.post('/upload-images', imageUpload.array('images', 10), async (req, res) => 
     const files = req.files;
     console.log(files);
     try {
-        res.json({ testi: "upload-images" });
+        const texts = await Promise.all(files.map(async file => {
+            const imagePath = file.path;
+            const [result] = await imageClient.textDetection(imagePath);
+            console.log(result.textAnnotations[0]);
+            fs.unlinkSync(imagePath);
+        }));
     } catch(error) {
         console.error('Virhe:', error.message);
         res.status(500).json({ error: 'Internal server error' });
