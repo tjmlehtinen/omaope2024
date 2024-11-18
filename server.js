@@ -17,6 +17,7 @@ const app = express();
 const port = 3000;
 
 let textFromImages = '';
+let questionContext = [];
 
 app.use(bodyParser.json());
 app.use(express.static('public'));
@@ -54,14 +55,34 @@ app.post('/chat', async (req, res) => {
 
 app.post('/upload-images', imageUpload.array('images', 10), async (req, res) => {
     const files = req.files;
-    console.log(files);
+    //console.log(files);
     try {
         const texts = await Promise.all(files.map(async file => {
             const imagePath = file.path;
             const [result] = await imageClient.textDetection(imagePath);
-            console.log(result.textAnnotations[0]);
+            const detections = result.textAnnotations;
             fs.unlinkSync(imagePath);
+            return detections.length > 0 ? detections[0].description : '';
         }));
+        textFromImages = texts.join(' ');
+        questionContext = [
+            {role: 'user', content: textFromImages},
+            {role: 'user', content: "Anna ylläolevasta tekstistä kysymys ja sen vastaus."}
+        ];
+        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
+            },
+            body: JSON.stringify({
+                model: 'gpt-4o-mini',
+                messages: questionContext,
+                max_tokens: 150
+            })
+        });
+        const data = await response.json();
+        console.log(data.choices[0].message.content);
     } catch(error) {
         console.error('Virhe:', error.message);
         res.status(500).json({ error: 'Internal server error' });
