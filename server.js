@@ -19,6 +19,9 @@ const port = 3000;
 let textFromImages = '';
 let questionContext = [];
 
+let currentQuestion = '';
+let correctAnswer = '';
+
 app.use(bodyParser.json());
 app.use(express.static('public'));
 app.listen(port, () => {
@@ -82,7 +85,11 @@ app.post('/upload-images', imageUpload.array('images', 10), async (req, res) => 
             })
         });
         const data = await response.json();
-        console.log(data.choices[0].message.content);
+        const textResponse = data.choices[0].message.content;
+        const [question, answer] = textResponse.split('Vastaus:');
+        currentQuestion = question;
+        correctAnswer = answer;
+        res.json({ question: currentQuestion });
     } catch(error) {
         console.error('Virhe:', error.message);
         res.status(500).json({ error: 'Internal server error' });

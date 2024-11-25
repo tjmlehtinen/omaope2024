@@ -46,10 +46,10 @@ async function sendImages() {
             body: formData
         });
         const data = await response.json();
-        console.log(data);
+        addMessageTo(questionbox, data.question);
     } catch (error) {
         console.error("Virhe:", error.message);
-        addMessageTo(chatbox, "Tapahtui virhe.");
+        addMessageTo(questionbox, "Tapahtui virhe.");
     }
 }
 
