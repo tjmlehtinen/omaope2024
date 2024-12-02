@@ -4,9 +4,12 @@ const chatbox = document.getElementById("chatbox");
 const imageButton = document.getElementById("image-button");
 const imageInput = document.getElementById("image-input");
 const questionbox = document.getElementById("questionbox");
+const answerButton = document.getElementById("answer-button");
+const answerInput = document.getElementById("answer-input");
 
 messageButton.addEventListener("click", sendMessage);
 imageButton.addEventListener("click", sendImages);
+answerButton.addEventListener("click", sendAnswer);
 
 async function sendMessage() {
     const userMessage = messageInput.value;
@@ -48,6 +51,26 @@ async function sendImages() {
         const data = await response.json();
         addMessageTo(questionbox, data.question);
     } catch (error) {
+        console.error("Virhe:", error.message);
+        addMessageTo(questionbox, "Tapahtui virhe.");
+    }
+}
+
+async function sendAnswer() {
+    const userAnswer = answerInput.value;
+    answerInput.value = "";
+    if (userAnswer.trim() === "") return;
+    addMessageTo(questionbox, userAnswer);
+    try {
+        const response = await fetch("/check-answer", {
+            method: "POST",
+            headers: { "Content-type": "application/json" },
+            body: JSON.stringify({ message: userAnswer })
+        });
+        const data = await response.json();
+        console.log(data);
+        addMessageTo(questionbox, data.message);
+    } catch(error) {
         console.error("Virhe:", error.message);
         addMessageTo(questionbox, "Tapahtui virhe.");
     }
