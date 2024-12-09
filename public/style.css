@@ -1,3 +1,9 @@
 body {
     background-color: rgb(220, 240, 220);
 }
+
+.chatbox {
+    overflow: auto;
+    border-bottom: 1px solid #ddd;
+    padding: 10px;
+}

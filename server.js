@@ -100,7 +100,13 @@ app.post('/check-answer', async (req, res) => {
     const userAnswer = req.body.message;
     console.log(userAnswer);
     try {
-        /* 
+        const toChatGPT = [
+            { role: 'system', content: 'Olet opettaja, joka arvioi oppilaiden vastauksia kysymyksiin'},
+            { role: 'user', content: 'Kysymys: ' + currentQuestion },
+            { role: 'user', content: 'Oikea vastaus: ' + correctAnswer },
+            { role: 'user', content: 'Oppilaan vastaus: ' + userAnswer },
+            { role: 'user', content: 'Arvioi oppilaan vastaus asteikolla 1-10. Anna myös sanallinen palaute.'}
+        ];
         const response = await fetch('https://api.openai.com/v1/chat/completions', {
             method: 'POST',
             headers: {
@@ -109,17 +115,14 @@ app.post('/check-answer', async (req, res) => {
             },
             body: JSON.stringify({
                 model: 'gpt-4o-mini',
-                messages: [
-                    { role: 'user', content: userMessage }
-                ],
+                messages: toChatGPT,
                 max_tokens: 150
             })
         });
         const data = await response.json();
         console.log(data.choices[0].message);
         const botMessage = data.choices[0].message.content;
-        */
-        res.json({ message: "toi mii" });
+        res.json({ message: botMessage });
     } catch(error) {
         console.error('Virhe:', error.message);
         res.status(500).json({ error: 'Internal server error' });
